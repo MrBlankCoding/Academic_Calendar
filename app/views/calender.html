@@ -1,1 +1,64 @@
-<!-- Calendar view-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Calendar</title>
+    <link rel="stylesheet" href="../css/calender/calender.css">
+</head>
+<body>
+    <div class="calendar-container">
+        <header class="calendar-header">
+            <h1>Academic Calendar</h1>
+            <div class="calendar-controls">
+                <button id="add-event-btn" class="btn btn-primary">Add Event</button>
+                <button id="today-btn" class="btn btn-secondary">Today</button>
+            </div>
+        </header>
+        
+        <div id="calendar"></div>
+        
+        <!-- Event Modal -->
+        <div id="event-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Add New Event</h2>
+                <form id="event-form">
+                    <div class="form-group">
+                        <label for="event-title">Event Title:</label>
+                        <input type="text" id="event-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-start">Start Date:</label>
+                        <input type="datetime-local" id="event-start" name="start" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-end">End Date:</label>
+                        <input type="datetime-local" id="event-end" name="end">
+                    </div>
+                    <div class="form-group">
+                        <label for="event-description">Description:</label>
+                        <textarea id="event-description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-type">Event Type:</label>
+                        <select id="event-type" name="type">
+                            <option value="class">Class</option>
+                            <option value="exam">Exam</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="holiday">Holiday</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Event</button>
+                        <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="../js/calendar.js"></script>
+</body>
+</html>

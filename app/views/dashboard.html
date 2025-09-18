@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard • Academic Calendar</title>
+    <link rel="stylesheet" href="/css/global_theme.css" />
+    <link rel="stylesheet" href="/css/dashboard/dashboard.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="left">
+        <strong>Dashboard</strong>
+        <a class="btn outline" href="/views/calender.html" style="margin-left: 12px;">Calendar</a>
+      </div>
+      <div class="right theme-toggle">
+        <button id="btnThemeSystem" class="btn outline" type="button">System</button>
+        <button id="btnThemeLight" class="btn outline" type="button">Light</button>
+        <button id="btnThemeDark" class="btn outline" type="button">Dark</button>
+        <button id="signOutBtn" class="btn primary" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <main class="dashboard container">
+    </main>
+
+    <script type="module">
+      import { protectPageOrRedirectToLogin, signOutAndGoHome } from "/js/firebase-config.js";
+      import { initThemeToggle } from "/js/theme.js";
+
+      protectPageOrRedirectToLogin();
+
+      initThemeToggle();
+
+      // Sign out
+      document.getElementById("signOutBtn")?.addEventListener("click", () => {
+        signOutAndGoHome();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+.dashboard {
+    padding: var(--space-4);
+  }
+  
+  .section {
+    margin-top: var(--space-4);
+  }
+  
+  .theme-toggle {
+    gap: var(--space-2);
+  }
+  
+  .theme-toggle .btn {
+    height: 32px;
+    padding: 0 var(--space-2);
+    font-size: var(--fs-1);
+  }

@@ -1,0 +1,19 @@
+.auth-card {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  
+  .auth-actions {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-3);
+  }
+  
+  .alt {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--muted);
+    font-size: var(--fs-1);
+  }

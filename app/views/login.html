@@ -1,1 +1,44 @@
-<!-- Login View -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login • Academic Calendar</title>
+    <link rel="stylesheet" href="/css/global_theme.css" />
+    <link rel="stylesheet" href="/css/auth/auth.css" />
+  </head>
+  <body>
+    <main class="container center">
+      <section class="card auth-card">
+        <h1 class="app-title">Login</h1>
+        <p class="muted">Welcome back.</p>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required placeholder="••••••••" />
+          </div>
+          <button class="btn primary" type="submit">Login</button>
+        </form>
+
+        <div class="auth-actions">
+          <button id="googleBtn" class="btn outline" type="button">Continue with Google</button>
+          <a class="alt" href="/views/register.html">Create an account</a>
+        </div>
+
+        <p id="error" class="alt" role="alert" style="display:none;"></p>
+      </section>
+    </main>
+
+    <script type="module">
+      import { syncTheme } from "/js/theme.js";
+      import { setupLoginPage } from "/js/auth.js";
+      syncTheme();
+      setupLoginPage();
+    </script>
+  </body>
+</html>

@@ -1,1 +1,5 @@
 firebase-debug.log
+
+# Node / Vite
+node_modules/
+dist/
