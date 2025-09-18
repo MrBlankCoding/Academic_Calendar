@@ -20,11 +20,13 @@ async function addTask(task) {
     title: task.title || 'Untitled Task',
     description: task.description || '',
     dueAt: task.dueAt || null,
-    type: task.type || 'other',
+    type: task.type || 'assignment', // Default to assignment for academic focus
+    classId: task.classId || null, // Associated class ID
     calendarEventId: task.calendarEventId || null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
     status: task.status || 'pending', // pending | done
+    important: !!task.important,
   });
   return ref.id;
 }

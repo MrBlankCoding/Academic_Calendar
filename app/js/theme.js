@@ -7,6 +7,7 @@ function applyTheme(theme) {
   } else {
     root.removeAttribute('data-theme');
   }
+  updateActiveThemeButton(theme);
 }
 
 function getStoredTheme() {
@@ -30,7 +31,33 @@ function syncTheme() {
   applyTheme(stored);
 }
 
-function initThemeToggle(opts = {}) {
+function updateActiveThemeButton(theme) {
+  const btnLight = document.getElementById('btnThemeLight');
+  const btnDark = document.getElementById('btnThemeDark');
+  const btnSystem = document.getElementById('btnThemeSystem');
+  
+  // Remove active class from all buttons
+  [btnLight, btnDark, btnSystem].forEach(btn => {
+    if (btn) {
+      btn.classList.remove('active');
+      btn.removeAttribute('data-selected');
+    }
+  });
+  
+  // Add active class to the selected button
+  if (theme === 'light' && btnLight) {
+    btnLight.classList.add('active');
+    btnLight.setAttribute('data-selected', 'true');
+  } else if (theme === 'dark' && btnDark) {
+    btnDark.classList.add('active');
+    btnDark.setAttribute('data-selected', 'true');
+  } else if (btnSystem) {
+    btnSystem.classList.add('active');
+    btnSystem.setAttribute('data-selected', 'true');
+  }
+}
+
+function initThemeToggle() {
   syncTheme();
 
   const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -45,21 +72,25 @@ function initThemeToggle(opts = {}) {
   const btnDark = document.getElementById('btnThemeDark');
   const btnSystem = document.getElementById('btnThemeSystem');
 
-  btnLight?.addEventListener('click', () => { setStoredTheme('light'); applyTheme('light'); });
-  btnDark?.addEventListener('click', () => { setStoredTheme('dark'); applyTheme('dark'); });
-  btnSystem?.addEventListener('click', () => { setStoredTheme(null); applyTheme(null); });
+  // Set initial active state
+  const currentTheme = getStoredTheme() || 'system';
+  updateActiveThemeButton(currentTheme === 'system' ? null : currentTheme);
 
-  function reflect() {
-    const stored = getStoredTheme();
-    const active = stored ?? `system(${getSystemPreference()})`;
-    [btnLight, btnDark, btnSystem].forEach(b => b?.classList.remove('primary'));
-    if (stored === 'light') btnLight?.classList.add('primary');
-    else if (stored === 'dark') btnDark?.classList.add('primary');
-    else btnSystem?.classList.add('primary');
-  }
-  reflect();
-  [btnLight, btnDark, btnSystem].forEach(b => b?.addEventListener('click', reflect));
+  // Add event listeners
+  btnLight?.addEventListener('click', () => { 
+    setStoredTheme('light'); 
+    applyTheme('light'); 
+  });
+  
+  btnDark?.addEventListener('click', () => { 
+    setStoredTheme('dark'); 
+    applyTheme('dark'); 
+  });
+  
+  btnSystem?.addEventListener('click', () => { 
+    setStoredTheme(null); 
+    applyTheme(null); 
+  });
 }
-
 
 export { initThemeToggle, syncTheme };
