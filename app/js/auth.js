@@ -1,4 +1,3 @@
-// Auth flows for login and register pages
 import { auth, googleProvider, redirectToDashboardIfAuthed } from "/js/firebase-config.js";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
@@ -19,7 +18,6 @@ function navigateToDashboard() {
 }
 
 function setupLoginPage() {
-  // If already authed, go to dashboard
   redirectToDashboardIfAuthed();
 
   const form = document.getElementById('loginForm');
@@ -50,7 +48,6 @@ function setupLoginPage() {
 }
 
 function setupRegisterPage() {
-  // If already authed, go to dashboard
   redirectToDashboardIfAuthed();
 
   const form = document.getElementById('registerForm');

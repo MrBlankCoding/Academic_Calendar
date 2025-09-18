@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Calendar</title>
+    <link rel="stylesheet" href="../css/global_theme.css">
     <link rel="stylesheet" href="../css/calender/calender.css">
 </head>
 <body>
@@ -12,7 +13,6 @@
             <h1>Academic Calendar</h1>
             <div class="calendar-controls">
                 <button id="add-event-btn" class="btn btn-primary">Add Event</button>
-                <button id="today-btn" class="btn btn-secondary">Today</button>
             </div>
         </header>
         
@@ -21,7 +21,7 @@
         <!-- Event Modal -->
         <div id="event-modal" class="modal">
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close" aria-label="Close">&times;</span>
                 <h2>Add New Event</h2>
                 <form id="event-form">
                     <div class="form-group">

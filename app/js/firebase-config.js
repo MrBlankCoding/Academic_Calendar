@@ -1,10 +1,8 @@
-// Firebase initialization using v9+ modular SDK via npm packages
-// This file centralizes Firebase config and common auth helpers.
-
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-// Your Firebase configuration
+// LOAD FROM ENV FOR FINAL SUBMISSION!!!!!!
 const firebaseConfig = {
   apiKey: "AIzaSyDcwBwQ3mepNsAWpu5r_mZRC4pYK4H82nE",
   authDomain: "academic-calendar-814e3.firebaseapp.com",
@@ -15,12 +13,10 @@ const firebaseConfig = {
   measurementId: "G-57GSJSQCR6"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
-
-// Helper: If user is signed in, redirect to dashboard
+const db = getFirestore(app);
 function redirectToDashboardIfAuthed() {
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -29,7 +25,6 @@ function redirectToDashboardIfAuthed() {
   });
 }
 
-// Helper: Protect a page by requiring auth; otherwise go to login
 function protectPageOrRedirectToLogin() {
   onAuthStateChanged(auth, (user) => {
     if (!user) {
@@ -38,7 +33,6 @@ function protectPageOrRedirectToLogin() {
   });
 }
 
-// Helper: Sign out and return to home
 async function signOutAndGoHome() {
   await signOut(auth);
   window.location.replace("/");
@@ -52,4 +46,5 @@ export {
   redirectToDashboardIfAuthed,
   protectPageOrRedirectToLogin,
   signOutAndGoHome,
+  db,
 };

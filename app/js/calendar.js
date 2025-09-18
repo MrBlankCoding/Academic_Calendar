@@ -2,6 +2,9 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { protectPageOrRedirectToLogin, auth } from '/js/firebase-config.js';
+import { addTask } from '/js/tasks.js';
+import { buildTaskFromEventForm } from '/js/schedule.js';
 
 class AcademicCalendar {
     constructor() {
@@ -11,6 +14,8 @@ class AcademicCalendar {
     }
 
     init() {
+        // Ensure only authed users can access page
+        protectPageOrRedirectToLogin();
         this.initializeCalendar();
         this.setupEventListeners();
         this.setupModal();
@@ -66,15 +71,10 @@ class AcademicCalendar {
             this.openModal();
         });
 
-        // Today button
-        document.getElementById('today-btn').addEventListener('click', () => {
-            this.calendar.today();
-        });
-
         // Event form submission
-        document.getElementById('event-form').addEventListener('submit', (e) => {
+        document.getElementById('event-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            this.saveEvent();
+            await this.saveEvent();
         });
 
         // Cancel button
@@ -99,14 +99,12 @@ class AcademicCalendar {
     }
 
     handleDateSelect(info) {
-        // Pre-fill the form with selected date
         const startInput = document.getElementById('event-start');
         const endInput = document.getElementById('event-end');
         
         const startDate = new Date(info.start);
         const endDate = new Date(info.end);
         
-        // Format for datetime-local input
         startInput.value = this.formatDateForInput(startDate);
         endInput.value = this.formatDateForInput(endDate);
         
@@ -137,7 +135,6 @@ class AcademicCalendar {
         const form = document.getElementById('event-form');
         
         if (eventData) {
-            // Editing existing event
             document.getElementById('event-title').value = eventData.title || '';
             document.getElementById('event-start').value = this.formatDateForInput(eventData.start);
             document.getElementById('event-end').value = this.formatDateForInput(eventData.end);
@@ -148,21 +145,21 @@ class AcademicCalendar {
             form.reset();
         }
         
-        modal.style.display = 'block';
+        modal.classList.add('open');
     }
 
     closeModal() {
         const modal = document.getElementById('event-modal');
-        modal.style.display = 'none';
+        modal.classList.remove('open');
         document.getElementById('event-form').reset();
     }
 
-    saveEvent() {
+    async saveEvent() {
         const form = document.getElementById('event-form');
         const formData = new FormData(form);
         
         const eventData = {
-            id: Date.now().toString(), // Simple ID generation
+            id: Date.now().toString(),
             title: formData.get('title'),
             start: formData.get('start'),
             end: formData.get('end') || formData.get('start'),
@@ -170,7 +167,6 @@ class AcademicCalendar {
             type: formData.get('type')
         };
 
-        // Add to calendar
         this.calendar.addEvent({
             id: eventData.id,
             title: eventData.title,
@@ -182,8 +178,19 @@ class AcademicCalendar {
             }
         });
 
-        // Save to storage
         this.saveEventToStorage(eventData);
+
+        // Also create a Firestore task tied to the current user
+        try {
+            if (!auth.currentUser) throw new Error('Not authenticated');
+            const taskPayload = buildTaskFromEventForm(formData);
+            // link back to this calendar event id
+            taskPayload.calendarEventId = eventData.id;
+            await addTask(taskPayload);
+        } catch (err) {
+            console.warn('Failed to add task to Firestore:', err);
+            // Non-fatal for UI; event still added locally
+        }
         this.closeModal();
     }
 
@@ -199,33 +206,7 @@ class AcademicCalendar {
         if (stored) {
             return JSON.parse(stored);
         }
-        
-        // Default sample events
-        return [
-            {
-                id: '1',
-                title: 'Fall Semester Begins',
-                start: '2024-09-01',
-                type: 'holiday',
-                description: 'First day of fall semester'
-            },
-            {
-                id: '2',
-                title: 'Midterm Exams',
-                start: '2024-10-15',
-                end: '2024-10-19',
-                type: 'exam',
-                description: 'Midterm examination period'
-            },
-            {
-                id: '3',
-                title: 'Thanksgiving Break',
-                start: '2024-11-25',
-                end: '2024-11-29',
-                type: 'holiday',
-                description: 'Thanksgiving holiday break'
-            }
-        ];
+        return [];
     }
 
     saveEventToStorage(eventData) {
@@ -254,7 +235,6 @@ class AcademicCalendar {
     }
 }
 
-// Initialize calendar when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new AcademicCalendar();
 });
