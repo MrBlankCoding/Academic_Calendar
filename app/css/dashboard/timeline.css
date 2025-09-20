@@ -1,0 +1,206 @@
+/* Dashboard Cards */
+.dashboard-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklab, var(--surface) 98%, var(--border));
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: var(--fs-2);
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.card-header h3 i {
+  color: var(--primary);
+}
+
+.card-count {
+  background: var(--primary);
+  color: var(--primary-contrast);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: var(--fs-1);
+  font-weight: 600;
+  min-width: 24px;
+  text-align: center;
+}
+
+.card-content {
+  padding: var(--space-3);
+  min-height: 200px;
+}
+
+/* Assignment Lists */
+.assignment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.assignment-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: color-mix(in oklab, var(--surface) 95%, var(--border));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.assignment-item:hover {
+  background: color-mix(in oklab, var(--primary) 5%, transparent);
+  border-color: var(--primary);
+}
+
+.assignment-checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.assignment-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.assignment-title {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.assignment-title.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.assignment-meta {
+  font-size: var(--fs-1);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.assignment-class {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.class-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.assignment-important {
+  color: #f59e0b;
+}
+
+/* Classes List */
+.classes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.class-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: color-mix(in oklab, var(--surface) 95%, var(--border));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.class-item:hover {
+  background: color-mix(in oklab, var(--primary) 5%, transparent);
+  border-color: var(--primary);
+}
+
+.class-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.class-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.class-name {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.class-instructor {
+  font-size: var(--fs-1);
+  color: var(--muted);
+}
+
+.class-actions {
+  display: flex;
+  gap: var(--space-1);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.class-item:hover .class-actions {
+  opacity: 1;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: var(--space-4);
+  color: var(--muted);
+}
+
+.empty-state i {
+  font-size: 2em;
+  margin-bottom: var(--space-2);
+  opacity: 0.5;
+}

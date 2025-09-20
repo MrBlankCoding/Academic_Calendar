@@ -1,10 +1,12 @@
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+
 import { protectPageOrRedirectToLogin, auth } from '/js/firebase-config.js';
 import { addTask, listTasks } from '/js/tasks.js';
 import { listClasses } from '/js/classes.js';
+import { syncTheme } from '/js/theme.js';
+import { formatDateForInput, toLocalDateKey } from '/js/dateUtils.js';
 
 class AcademicCalendar {
     constructor() {
@@ -12,12 +14,16 @@ class AcademicCalendar {
         this.userClasses = [];
         this.assignments = [];
         this.selectedDate = null;
+        this.hiddenClassIds = new Set();
         this.init();
     }
 
     async init() {
         // Ensure only authed users can access page
         protectPageOrRedirectToLogin();
+        
+        // Initialize theme system
+        syncTheme();
         
         // Wait for auth to be ready
         await this.waitForAuth();
@@ -29,6 +35,8 @@ class AcademicCalendar {
         this.initializeCalendar();
         this.setupEventListeners();
         this.setupModal();
+        this.renderClassLegend();
+        this.updateCalendarTitle();
     }
 
     waitForAuth() {
@@ -65,6 +73,22 @@ class AcademicCalendar {
         }
     }
 
+    async refreshData() {
+        try {
+            const [classes, tasks] = await Promise.all([
+                listClasses(),
+                listTasks()
+            ]);
+            this.userClasses = classes;
+            this.assignments = tasks.filter(task => task.type === 'assignment');
+            this.populateClassDropdown();
+            this.renderClassLegend();
+            this.refreshCalendarEvents();
+        } catch (e) {
+            console.error('Failed to refresh calendar data:', e);
+        }
+    }
+
     populateClassDropdown() {
         const classSelect = document.getElementById('assignment-class');
         if (!classSelect) return;
@@ -85,24 +109,43 @@ class AcademicCalendar {
         const calendarEl = document.getElementById('calendar');
         
         this.calendar = new Calendar(calendarEl, {
-            plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+            plugins: [dayGridPlugin, interactionPlugin],
             initialView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
+            headerToolbar: false, // We handle this with custom header
+            height: '100%',
+            expandRows: true,
+            firstDay: 0, // start week on Sunday
             editable: true,
             selectable: true,
             selectMirror: true,
             dayMaxEvents: true,
             weekends: true,
+            nowIndicator: true,
             events: this.formatAssignmentsForCalendar(),
-            
+
             // Event handlers
             select: (info) => this.handleDateSelect(info),
+            dateClick: (info) => this.handleDateClick(info),
             eventClick: (info) => this.handleEventClick(info),
             eventDrop: (info) => this.handleEventDrop(info),
+            datesSet: (info) => {
+                this.renderDayBadges();
+                this.updateCalendarTitle();
+            },
+
+            // Day cell hook for badges
+            dayCellDidMount: (arg) => {
+                // Ensure a badge container exists
+                const dateKey = toLocalDateKey(arg.date);
+                const badge = document.createElement('span');
+                badge.className = 'day-badge';
+                badge.dataset.date = dateKey;
+                badge.textContent = '';
+                // Avoid duplicates
+                if (!arg.el.querySelector('.day-badge')) {
+                    arg.el.appendChild(badge);
+                }
+            },
             
             // Custom event rendering for assignments
             eventDidMount: (info) => {
@@ -119,7 +162,6 @@ class AcademicCalendar {
                     // Mark important assignments
                     if (assignment.important) {
                         info.el.classList.add('important');
-                        info.el.style.borderLeft = `4px solid #ef4444`;
                     }
                     
                     // Add tooltip with assignment details
@@ -130,10 +172,19 @@ class AcademicCalendar {
         });
 
         this.calendar.render();
+        // Initial badge render after first paint
+        setTimeout(() => this.renderDayBadges(), 0);
     }
 
-    formatAssignmentsForCalendar() {
-        return this.assignments.map(assignment => ({
+    updateCalendarTitle() {
+        const titleEl = document.getElementById('calendar-title');
+        if (titleEl && this.calendar) {
+            titleEl.textContent = this.calendar.view.title;
+        }
+    }
+
+    formatAssignmentsForCalendar(assignments = this.assignments) {
+        return assignments.map(assignment => ({
             id: assignment.id,
             title: assignment.title,
             start: assignment.dueAt,
@@ -144,6 +195,19 @@ class AcademicCalendar {
                 important: assignment.important
             }
         }));
+    }
+
+    getFilteredAssignments() {
+        if (!this.hiddenClassIds || this.hiddenClassIds.size === 0) return this.assignments;
+        return this.assignments.filter(a => a.classId ? !this.hiddenClassIds.has(a.classId) : true);
+    }
+
+    refreshCalendarEvents() {
+        const filtered = this.getFilteredAssignments();
+        // Replace events with filtered list
+        this.calendar.removeAllEvents();
+        this.calendar.addEventSource(this.formatAssignmentsForCalendar(filtered));
+        this.renderDayBadges();
     }
 
     createAssignmentTooltip(assignment, associatedClass) {
@@ -161,6 +225,29 @@ class AcademicCalendar {
     }
 
     setupEventListeners() {
+        // Navigation buttons
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const todayBtn = document.getElementById('today-btn');
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                this.calendar.prev();
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                this.calendar.next();
+            });
+        }
+
+        if (todayBtn) {
+            todayBtn.addEventListener('click', () => {
+                this.calendar.today();
+            });
+        }
+
         // Add Assignment button
         document.getElementById('add-assignment-btn').addEventListener('click', () => {
             this.openModal();
@@ -176,15 +263,20 @@ class AcademicCalendar {
         document.getElementById('cancel-assignment-btn').addEventListener('click', () => {
             this.closeModal();
         });
+
+        // Auto-refresh data when returning to tab
+        window.addEventListener('focus', () => this.refreshData());
     }
 
     setupModal() {
         const modal = document.getElementById('assignment-modal');
-        const closeBtn = document.querySelector('.close');
+        const closeBtn = document.querySelector('.modal-header .close');
 
-        closeBtn.addEventListener('click', () => {
-            this.closeModal();
-        });
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                this.closeModal();
+            });
+        }
 
         window.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -202,11 +294,23 @@ class AcademicCalendar {
         if (dueDateInput) {
             const localDate = new Date(info.start);
             localDate.setHours(23, 59); // Default to end of day
-            dueDateInput.value = this.formatDateForInput(localDate);
+            dueDateInput.value = formatDateForInput(localDate);
         }
         
         this.openModal();
         this.calendar.unselect();
+    }
+
+    handleDateClick(info) {
+        // Quick add from single day click
+        this.selectedDate = info.date;
+        const dueDateInput = document.getElementById('assignment-due-date');
+        if (dueDateInput) {
+            const localDate = new Date(info.date);
+            localDate.setHours(23, 59);
+            dueDateInput.value = formatDateForInput(localDate);
+        }
+        this.openModal();
     }
 
     handleEventClick(info) {
@@ -236,6 +340,7 @@ class AcademicCalendar {
             assignment.dueAt = newDueDate;
             // TODO: Update in Firestore
         }
+        this.renderDayBadges();
     }
 
     openModal() {
@@ -250,10 +355,11 @@ class AcademicCalendar {
             const dueDateInput = document.getElementById('assignment-due-date');
             const localDate = new Date(this.selectedDate);
             localDate.setHours(23, 59);
-            dueDateInput.value = this.formatDateForInput(localDate);
+            dueDateInput.value = formatDateForInput(localDate);
         }
         
         modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
         
         // Focus on title input
         setTimeout(() => {
@@ -264,6 +370,7 @@ class AcademicCalendar {
     closeModal() {
         const modal = document.getElementById('assignment-modal');
         modal.classList.remove('open');
+        document.body.style.overflow = '';
         document.getElementById('assignment-form').reset();
         this.selectedDate = null;
     }
@@ -295,30 +402,13 @@ class AcademicCalendar {
             const newAssignment = { ...assignmentData, id: assignmentId };
             this.assignments.push(newAssignment);
             
-            // Add to calendar
-            const associatedClass = this.userClasses.find(c => c.id === assignmentData.classId);
-            this.calendar.addEvent({
-                id: assignmentId,
-                title: assignmentData.title,
-                start: assignmentData.dueAt,
-                allDay: true,
-                backgroundColor: associatedClass?.color || '#3b82f6',
-                borderColor: associatedClass?.color || '#3b82f6',
-                extendedProps: {
-                    description: assignmentData.description,
-                    classId: assignmentData.classId,
-                    important: assignmentData.important
-                }
-            });
+            // Add to calendar (respect filters)
+            this.refreshCalendarEvents();
 
             this.closeModal();
             
-            // Show success message
-            this.showNotification('Assignment saved successfully!', 'success');
-            
         } catch (error) {
             console.error('Error saving assignment:', error);
-            this.showNotification('Failed to save assignment. Please try again.', 'error');
         } finally {
             // Reset button state
             const submitBtn = form.querySelector('button[type="submit"]');
@@ -341,63 +431,74 @@ class AcademicCalendar {
             // TODO: Remove from Firestore
             // await removeTask(assignmentId);
             
-            this.showNotification('Assignment deleted successfully!', 'success');
+            this.renderDayBadges();
             
         } catch (error) {
             console.error('Error deleting assignment:', error);
-            this.showNotification('Failed to delete assignment.', 'error');
         }
     }
 
-    formatDateForInput(date) {
-        if (!date) return '';
-        const d = new Date(date);
-        return d.toISOString().slice(0, 16);
+    renderDayBadges() {
+        if (!this.calendar) return;
+        // Build counts for the visible range
+        const assignments = this.getFilteredAssignments();
+        const counts = new Map();
+        for (const a of assignments) {
+            if (!a.dueAt) continue;
+            const key = toLocalDateKey(a.dueAt);
+            counts.set(key, (counts.get(key) || 0) + 1);
+        }
+        // Update badges in the current DOM
+        const dayCells = document.querySelectorAll('.fc-daygrid-day');
+        dayCells.forEach(cell => {
+            const dateKey = cell.getAttribute('data-date');
+            const badge = cell.querySelector('.day-badge');
+            const count = counts.get(dateKey) || 0;
+            if (badge) {
+                badge.textContent = count > 0 ? String(count) : '';
+                badge.style.display = count > 0 ? 'inline-flex' : 'none';
+            }
+        });
     }
 
-    showNotification(message, type = 'info') {
-        // Create a simple notification system
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            z-index: 10000;
-            animation: slideIn 0.3s ease;
-            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-        `;
+    renderClassLegend() {
+        const legend = document.getElementById('class-legend');
+        if (!legend) return;
+        legend.innerHTML = '';
         
-        document.body.appendChild(notification);
+        if (!this.userClasses || this.userClasses.length === 0) {
+            legend.innerHTML = '<div class="legend-empty">No classes yet. Add classes in your dashboard to color-code assignments.</div>';
+            return;
+        }
         
-        // Remove after 3 seconds
-        setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 300);
-        }, 3000);
+        this.userClasses.forEach(c => {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+            const checked = !this.hiddenClassIds.has(c.id);
+            item.innerHTML = `
+                <label class="legend-toggle">
+                    <input type="checkbox" data-class-id="${c.id}" ${checked ? 'checked' : ''} />
+                    <span class="legend-dot" style="background:${c.color || '#3b82f6'}"></span>
+                    <span class="legend-name">${c.name}</span>
+                </label>
+            `;
+            legend.appendChild(item);
+        });
+        
+        // Wire up checkbox events
+        legend.querySelectorAll('input[type="checkbox"][data-class-id]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const id = e.target.getAttribute('data-class-id');
+                if (e.target.checked) {
+                    this.hiddenClassIds.delete(id);
+                } else {
+                    this.hiddenClassIds.add(id);
+                }
+                this.refreshCalendarEvents();
+            });
+        });
     }
 }
-
-// Add CSS for notifications
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-`;
-document.head.appendChild(style);
 
 document.addEventListener('DOMContentLoaded', () => {
     new AcademicCalendar();

@@ -1,9 +1,5 @@
 // scheduling algorithm
 
-/**
- * Build a Firestore task object from the calendar event form data
- * @param {FormData} formData
- */
 function buildTaskFromEventForm(formData) {
   const title = formData.get('title')?.toString() || 'Untitled Event';
   const start = formData.get('start')?.toString() || '';

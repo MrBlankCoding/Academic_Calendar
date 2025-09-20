@@ -4,61 +4,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Calendar</title>
-    <link rel="stylesheet" href="../css/global_theme.css">
     <link rel="stylesheet" href="../css/calender/calender.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="calendar-container">
-        <header class="calendar-header">
-            <h1>Academic Calendar</h1>
-            <div class="calendar-controls">
-                <a href="/views/dashboard.html" class="btn btn-outline">Dashboard</a>
-                <button id="add-assignment-btn" class="btn btn-primary">Add Assignment</button>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="app-logo">
+                    <i class="fas fa-calendar-alt"></i>
+                    Academic Calendar
+                </h1>
             </div>
-        </header>
-        
-        <div id="calendar"></div>
+
+            <div class="sidebar-content">
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button id="add-assignment-btn" class="btn-create">
+                        <i class="fas fa-plus"></i>
+                        Add Assignment
+                    </button>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="sidebar-nav">
+                    <a href="/views/dashboard.html" class="nav-item">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/views/calender.html" class="nav-item active">
+                        <i class="fas fa-calendar"></i>
+                        <span>Calendar</span>
+                    </a>
+                </nav>
+
+                <!-- Class Legend -->
+                <div class="class-legend-section">
+                    <div class="section-header">
+                        <h3>My Classes</h3>
+                        <button class="btn-icon" id="toggle-all-classes" title="Toggle all classes">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="calendar-legend" id="class-legend" aria-label="Class color legend"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Calendar Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <div class="calendar-navigation">
+                        <button class="btn-nav" id="prev-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="btn-nav" id="next-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="btn-nav" id="today-btn">Today</button>
+                    </div>
+                    <h2 class="page-title" id="calendar-title">Loading...</h2>
+                </div>
+            </header>
+
+            <!-- Calendar Container -->
+            <div class="content-wrapper">
+                <div id="calendar"></div>
+            </div>
+        </main>
         
         <!-- Assignment Modal -->
-        <div id="assignment-modal" class="modal">
+        <div id="assignment-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="assignment-modal-title">
             <div class="modal-content">
-                <span class="close" aria-label="Close">&times;</span>
-                <h2>Add New Assignment</h2>
+                <div class="modal-header">
+                    <h2 id="assignment-modal-title">Add New Assignment</h2>
+                    <button class="btn-icon close" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
                 <form id="assignment-form">
-                    <div class="form-group">
-                        <label for="assignment-title">Assignment Name:</label>
-                        <input type="text" id="assignment-title" name="title" required placeholder="e.g., Math Homework Chapter 5">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="assignment-title">Assignment Name</label>
+                            <input type="text" id="assignment-title" name="title" required placeholder="e.g., Math Homework Chapter 5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="assignment-description">Description (Optional)</label>
+                            <textarea id="assignment-description" name="description" rows="3" placeholder="Additional details about the assignment..."></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="assignment-due-date">Due Date</label>
+                                <input type="datetime-local" id="assignment-due-date" name="dueDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="assignment-class">Class</label>
+                                <select id="assignment-class" name="classId" required>
+                                    <option value="">Select a class...</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="assignment-important" name="important">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-text">Mark as Important</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-help">
+                            <small>Don't see your class? <a href="/views/dashboard.html">Add it in the dashboard</a></small>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="assignment-description">Description (Optional):</label>
-                        <textarea id="assignment-description" name="description" rows="3" placeholder="Additional details about the assignment..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="assignment-due-date">Due Date:</label>
-                        <input type="datetime-local" id="assignment-due-date" name="dueDate" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="assignment-class">Class:</label>
-                        <select id="assignment-class" name="classId" required>
-                            <option value="">Select a class...</option>
-                        </select>
-                        <small class="form-help">Don't see your class? <a href="/views/dashboard.html">Add it in the dashboard</a></small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="assignment-important" name="important">
-                            <span class="checkmark"></span>
-                            Mark as Important
-                        </label>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Save Assignment</button>
-                        <button type="button" id="cancel-assignment-btn" class="btn btn-secondary">Cancel</button>
+                    <div class="modal-footer">
+                        <button type="button" id="cancel-assignment-btn" class="btn outline">Cancel</button>
+                        <button type="submit" class="btn primary">Save Assignment</button>
                     </div>
                 </form>
             </div>

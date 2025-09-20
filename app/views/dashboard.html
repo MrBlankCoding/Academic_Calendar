@@ -1,97 +1,251 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard • Academic Calendar</title>
-    <link rel="stylesheet" href="../css/global_theme.css" />
-    <link rel="stylesheet" href="../css/dashboard/dashboard.css" />
-  </head>
-  <body>
-    <header class="header">
-      <div class="left">
-        <strong>Dashboard</strong>
-        <a class="btn outline" href="/views/calender.html" style="margin-left: 12px;">Calendar</a>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard • Academic Calendar</title>
+  <link rel="stylesheet" href="../css/dashboard/dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="app-logo">
+          <i class="fas fa-home"></i>
+          Academic Dashboard
+        </h1>
       </div>
-      <div class="right">
-        <button id="settingsBtn" class="btn outline" type="button">Settings</button>
-      </div>
-    </header>
 
-    <main class="dashboard container">
-      <div class="dashboard-grid">
-        <section class="card">
-          <h2>Today's Assignments</h2>
-          <ul id="todayAssignments" class="task-list"></ul>
-        </section>
-        
-        <section class="card">
-          <h2>My Classes</h2>
-          <div class="classes-section">
-            <button id="addClassBtn" class="btn primary small">Add Class</button>
-            <ul id="classesList" class="classes-list"></ul>
+      <div class="sidebar-content">
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button id="addClassBtn" class="btn-create">
+            <i class="fas fa-plus"></i>
+            Add Class
+          </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+          <a href="/views/dashboard.html" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="/views/calender.html" class="nav-item">
+            <i class="fas fa-calendar"></i>
+            <span>Calendar</span>
+          </a>
+        </nav>
+
+        <!-- Quick Stats -->
+        <div class="stats-section">
+          <div class="section-header">
+            <h3>Overview</h3>
           </div>
-        </section>
-        
-        <section class="card">
-          <h2>Important</h2>
-          <ul id="importantTasks" class="task-list"></ul>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-tasks"></i>
+              </div>
+              <div class="stat-info">
+                <div class="stat-number" id="totalAssignments">0</div>
+                <div class="stat-label">Total Assignments</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-book"></i>
+              </div>
+              <div class="stat-info">
+                <div class="stat-number" id="totalClasses">0</div>
+                <div class="stat-label">Classes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="settings-section">
+          <div class="section-header">
+            <h3>Settings</h3>
+          </div>
+          <button id="settingsBtn" class="settings-btn">
+            <i class="fas fa-cog"></i>
+            <span>Preferences</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <h2 class="page-title">Dashboard</h2>
+        </div>
+        <div class="header-right">
+          <div class="header-date">
+            <i class="fas fa-calendar-day"></i>
+            <span id="currentDate"></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="content-wrapper">
+        <div class="dashboard-grid">
+          <!-- Today's Assignments -->
+          <section class="dashboard-card">
+            <div class="card-header">
+              <h3>
+                <i class="fas fa-clock"></i>
+                Due Today
+              </h3>
+              <span class="card-count" id="todayCount">0</span>
+            </div>
+            <div class="card-content">
+              <ul id="todayAssignments" class="assignment-list"></ul>
+            </div>
+          </section>
+
+          <!-- Important Assignments -->
+          <section class="dashboard-card">
+            <div class="card-header">
+              <h3>
+                <i class="fas fa-star"></i>
+                Important
+              </h3>
+              <span class="card-count" id="importantCount">0</span>
+            </div>
+            <div class="card-content">
+              <ul id="importantTasks" class="assignment-list"></ul>
+            </div>
+          </section>
+
+          <!-- My Classes -->
+          <section class="dashboard-card classes-card">
+            <div class="card-header">
+              <h3>
+                <i class="fas fa-graduation-cap"></i>
+                My Classes
+              </h3>
+              <span class="card-count" id="classesCount">0</span>
+            </div>
+            <div class="card-content">
+              <ul id="classesList" class="classes-list"></ul>
+            </div>
+          </section>
+        </div>
+
+        <!-- Upcoming Assignments Timeline -->
+        <section class="upcoming-section">
+          <div class="upcoming-header">
+            <h2 class="upcoming-title">
+              <i class="fas fa-calendar-week"></i>
+              Upcoming Assignments
+            </h2>
+            <div class="upcoming-filters">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="week">This Week</button>
+              <button class="filter-btn" data-filter="month">This Month</button>
+              <button class="filter-btn" data-filter="important">Important</button>
+            </div>
+          </div>
+          <div class="upcoming-timeline">
+            <div class="timeline-container">
+              <div class="timeline-line"></div>
+              <div id="upcomingTimeline">
+                <!-- Timeline items will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
         </section>
       </div>
     </main>
+  </div>
 
-    <!-- Class Modal -->
-    <div id="class-modal" class="modal">
-      <div class="modal-content">
-        <span class="close" aria-label="Close">&times;</span>
+  <!-- Class Modal -->
+  <div id="class-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
         <h2 id="class-modal-title">Add New Class</h2>
-        <form id="class-form">
+        <button class="btn-icon close" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="class-form">
+        <div class="modal-body">
           <div class="form-group">
-            <label for="class-name">Class Name:</label>
+            <label for="class-name">Class Name</label>
             <input type="text" id="class-name" name="name" required placeholder="e.g., Calculus I">
           </div>
           <div class="form-group">
-            <label for="class-instructor">Instructor:</label>
+            <label for="class-instructor">Instructor (Optional)</label>
             <input type="text" id="class-instructor" name="instructor" placeholder="e.g., Dr. Smith">
           </div>
           <div class="form-group">
-            <label for="class-color">Color:</label>
+            <label for="class-color">Color</label>
             <div class="color-picker">
               <input type="color" id="class-color" name="color" value="#3788d8">
               <div class="color-presets" id="color-presets"></div>
             </div>
           </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Save Class</button>
-            <button type="button" id="cancel-class-btn" class="btn btn-secondary">Cancel</button>
-          </div>
-        </form>
-      </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancel-class-btn" class="btn outline">Cancel</button>
+          <button type="submit" class="btn primary">Save Class</button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal">
-      <div class="modal-content">
-        <span class="close" aria-label="Close">&times;</span>
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
         <h2>Settings</h2>
+        <button class="btn-icon close" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
         <div class="settings-section">
           <h3>Theme</h3>
-          <div class="theme-toggle settings-theme-toggle">
-            <button id="btnThemeSystem" class="btn outline" type="button">System</button>
-            <button id="btnThemeLight" class="btn outline" type="button">Light</button>
-            <button id="btnThemeDark" class="btn outline" type="button">Dark</button>
+          <div class="theme-toggle">
+            <button id="btnThemeSystem" class="btn outline" type="button">
+              <i class="fas fa-desktop"></i>
+              System
+            </button>
+            <button id="btnThemeLight" class="btn outline" type="button">
+              <i class="fas fa-sun"></i>
+              Light
+            </button>
+            <button id="btnThemeDark" class="btn outline" type="button">
+              <i class="fas fa-moon"></i>
+              Dark
+            </button>
           </div>
         </div>
         <div class="settings-section">
           <h3>Account</h3>
           <div class="settings-actions">
-            <button id="signOutBtn" class="btn outline">Sign Out</button>
-            <button id="deleteAccountBtn" class="btn danger">Delete Account</button>
+            <button id="signOutBtn" class="btn outline">
+              <i class="fas fa-sign-out-alt"></i>
+              Sign Out
+            </button>
+            <button id="deleteAccountBtn" class="btn danger">
+              <i class="fas fa-trash"></i>
+              Delete Account
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <script type="module" src="../js/dashboard.js"></script>
-  </body>
+  <script type="module" src="../js/dashboard.js"></script>
+</body>
 </html>
