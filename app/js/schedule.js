@@ -6,7 +6,6 @@ function buildTaskFromEventForm(formData) {
   const end = (formData.get('end')?.toString()) || start;
   const description = formData.get('description')?.toString() || '';
   const type = formData.get('type')?.toString() || 'other';
-  const important = formData.get('important') ? true : false;
 
   return {
     title,
@@ -15,7 +14,6 @@ function buildTaskFromEventForm(formData) {
     dueAt: end || start || null,
     type,
     status: 'pending',
-    important,
   };
 }
 

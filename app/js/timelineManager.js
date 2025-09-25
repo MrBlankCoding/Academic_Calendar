@@ -110,9 +110,6 @@ function getFilteredUpcomingAssignments() {
         return dueDate >= startMonth && dueDate <= endMonth;
       });
       break;
-    case 'important':
-      filtered = filtered.filter(task => task.important);
-      break;
     // 'all' shows all future assignments
   }
 
@@ -157,7 +154,6 @@ function createTimelineContent(assignment, date) {
   
   // Determine badges
   const badges = [];
-  if (assignment.important) badges.push('important');
   if (isOverdue(dueDate)) badges.push('overdue');
   else if (isDueSoon(dueDate)) badges.push('due-soon');
   
