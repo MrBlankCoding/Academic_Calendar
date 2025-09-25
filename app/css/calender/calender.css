@@ -257,3 +257,48 @@
   font-size: var(--fs-2);
   font-weight: 500;
 }
+
+/* Assignment Details Styling */
+.assignment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.class-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.btn.danger {
+  background-color: var(--color-red);
+  color: white;
+}
+
+.btn.danger:hover {
+  background-color: var(--color-red-dark, #dc2626);
+}

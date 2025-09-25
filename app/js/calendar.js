@@ -131,11 +131,6 @@ class AcademicCalendar {
             datesSet: (info) => {
                 this.updateCalendarTitle();
             },
-
-            // Day cell hook for badges
-            dayCellDidMount: (arg) => {
-                // Day badges disabled
-            },
             
             // Custom event rendering for assignments
             eventDidMount: (info) => {
@@ -249,18 +244,156 @@ class AcademicCalendar {
     setupModal() {
         const modal = document.getElementById('assignment-modal');
         const closeBtn = document.querySelector('.modal-header .close');
-
+    
         if (closeBtn) {
             closeBtn.addEventListener('click', () => {
                 this.closeModal();
             });
         }
-
+    
         window.addEventListener('click', (e) => {
             if (e.target === modal) {
                 this.closeModal();
             }
         });
+        
+        // Setup assignment details modal
+        this.setupDetailsModal();
+    }
+
+    setupDetailsModal() {
+        const detailsModal = document.getElementById('assignment-details-modal');
+        const closeDetailsBtn = document.getElementById('close-details-modal');
+        const editBtn = document.getElementById('edit-assignment-btn');
+        const deleteBtn = document.getElementById('delete-assignment-btn');
+    
+        if (closeDetailsBtn) {
+            closeDetailsBtn.addEventListener('click', () => {
+                this.closeDetailsModal();
+            });
+        }
+    
+        if (editBtn) {
+            editBtn.addEventListener('click', () => {
+                this.editAssignmentFromDetails();
+            });
+        }
+    
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                this.deleteAssignmentFromDetails();
+            });
+        }
+    
+        window.addEventListener('click', (e) => {
+            if (e.target === detailsModal) {
+                this.closeDetailsModal();
+            }
+        });
+    }
+    
+    showAssignmentDetails(assignment) {
+        const detailsModal = document.getElementById('assignment-details-modal');
+        if (!detailsModal) return;
+    
+        // Store current assignment for edit/delete operations
+        this.currentAssignment = assignment;
+    
+        // Find associated class
+        const associatedClass = this.userClasses.find(c => c.id === assignment.classId);
+    
+        // Populate details
+        document.getElementById('details-title').textContent = assignment.title;
+        
+        const classNameEl = document.getElementById('details-class-name');
+        const classDotEl = document.getElementById('details-class-dot');
+        
+        if (associatedClass) {
+            classNameEl.textContent = associatedClass.name;
+            classDotEl.style.backgroundColor = associatedClass.color;
+            classDotEl.style.display = 'inline-block';
+        } else {
+            classNameEl.textContent = 'No class assigned';
+            classDotEl.style.display = 'none';
+        }
+    
+        // Format due date
+        const dueDate = new Date(assignment.dueAt);
+        document.getElementById('details-due-date').textContent = dueDate.toLocaleString();
+    
+        // Handle description
+        const descriptionGroup = document.getElementById('details-description-group');
+        const descriptionEl = document.getElementById('details-description');
+        
+        if (assignment.description && assignment.description.trim()) {
+            descriptionEl.textContent = assignment.description;
+            descriptionGroup.style.display = 'block';
+        } else {
+            descriptionGroup.style.display = 'none';
+        }
+    
+        // Show modal
+        detailsModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    closeDetailsModal() {
+        const detailsModal = document.getElementById('assignment-details-modal');
+        if (detailsModal) {
+            detailsModal.classList.remove('open');
+            document.body.style.overflow = '';
+            this.currentAssignment = null;
+        }
+    }
+    
+    editAssignmentFromDetails() {
+        if (!this.currentAssignment) return;
+    
+        // Close details modal
+        this.closeDetailsModal();
+    
+        // Populate edit form with current assignment data
+        const form = document.getElementById('assignment-form');
+        const modal = document.getElementById('assignment-modal');
+        const modalTitle = document.getElementById('assignment-modal-title');
+        const submitBtn = form.querySelector('button[type="submit"]');
+    
+        // Set form to edit mode
+        modalTitle.textContent = 'Edit Assignment';
+        submitBtn.textContent = 'Update Assignment';
+        form.dataset.editMode = 'true';
+        form.dataset.assignmentId = this.currentAssignment.id;
+    
+        // Populate form fields
+        document.getElementById('assignment-title').value = this.currentAssignment.title;
+        document.getElementById('assignment-description').value = this.currentAssignment.description || '';
+        document.getElementById('assignment-due-date').value = formatDateForInput(new Date(this.currentAssignment.dueAt));
+        document.getElementById('assignment-class').value = this.currentAssignment.classId || '';
+    
+        // Show modal
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    
+        // Focus on title input
+        setTimeout(() => {
+            document.getElementById('assignment-title')?.focus();
+        }, 100);
+    }
+    
+    deleteAssignmentFromDetails() {
+        if (!this.currentAssignment) return;
+    
+        const associatedClass = this.userClasses.find(c => c.id === this.currentAssignment.classId);
+        const className = associatedClass ? associatedClass.name : 'No class';
+        
+        const confirmDelete = confirm(
+            `Delete assignment "${this.currentAssignment.title}" from ${className}?`
+        );
+        
+        if (confirmDelete) {
+            this.deleteAssignment(this.currentAssignment.id);
+            this.closeDetailsModal();
+        }
     }
 
     handleDateSelect(info) {
@@ -294,17 +427,8 @@ class AcademicCalendar {
     handleEventClick(info) {
         const assignment = this.assignments.find(a => a.id === info.event.id);
         if (!assignment) return;
-
-        const associatedClass = this.userClasses.find(c => c.id === assignment.classId);
-        const className = associatedClass ? associatedClass.name : 'No class';
         
-        const confirmDelete = confirm(
-            `Delete assignment "${assignment.title}" from ${className}?`
-        );
-        
-        if (confirmDelete) {
-            this.deleteAssignment(assignment.id);
-        }
+        this.showAssignmentDetails(assignment);
     }
 
     handleEventDrop(info) {

@@ -65,6 +65,52 @@
             </header>
             <div id="calendar"></div>
         </main>
+
+        <!-- Assignment Details Modal -->
+        <div id="assignment-details-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="assignment-details-modal-title">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="assignment-details-modal-title">Assignment Details</h2>
+                    <button class="btn-icon close" aria-label="Close" id="close-details-modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="assignment-details">
+                        <div class="detail-group">
+                            <label class="detail-label">Assignment Name</label>
+                            <div class="detail-value" id="details-title">Loading...</div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <label class="detail-label">Class</label>
+                            <div class="detail-value" id="details-class">
+                                <span class="class-dot" id="details-class-dot"></span>
+                                <span id="details-class-name">Loading...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <label class="detail-label">Due Date</label>
+                            <div class="detail-value" id="details-due-date">Loading...</div>
+                        </div>
+                        
+                        <div class="detail-group" id="details-description-group">
+                            <label class="detail-label">Description</label>
+                            <div class="detail-value" id="details-description">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" id="edit-assignment-btn" class="btn primary">
+                        <i class="fas fa-edit"></i> Edit Assignment
+                    </button>
+                    <button type="button" id="delete-assignment-btn" class="btn outline danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
         
         <!-- Assignment Modal -->
         <div id="assignment-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="assignment-modal-title">
