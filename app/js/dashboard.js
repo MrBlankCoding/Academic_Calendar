@@ -60,7 +60,6 @@ function updateStats() {
   const totalAssignmentsEl = document.getElementById('totalAssignments');
   const totalClassesEl = document.getElementById('totalClasses');
   const todayCountEl = document.getElementById('todayCount');
-  const importantCountEl = document.getElementById('importantCount');
   const classesCountEl = document.getElementById('classesCount');
 
   const userClasses = getUserClasses();
@@ -85,12 +84,6 @@ function updateStats() {
     todayCountEl.textContent = todayAssignments.length;
   }
 
-  // Count important tasks
-  const importantTasks = allTasks.filter(t => t.important && t.status !== 'done');
-  if (importantCountEl) {
-    importantCountEl.textContent = importantTasks.length;
-  }
-
   if (classesCountEl) {
     classesCountEl.textContent = userClasses.length;
   }
@@ -103,14 +96,11 @@ function renderAssignmentList(container, items, completedMap) {
     const emptyState = document.createElement('li');
     emptyState.className = 'empty-state';
     emptyState.innerHTML = `
-      <i class="fas fa-tasks"></i>
-      <p>No assignments found</p>
+      <p>Nothing for now :)</p>
     `;
     container.appendChild(emptyState);
     return;
   }
-
-  const userClasses = getUserClasses();
 
   for (const item of items) {
     const li = document.createElement('li');
@@ -129,9 +119,8 @@ function renderAssignmentList(container, items, completedMap) {
       <div class="assignment-content">
         <div class="assignment-title ${isCompleted ? 'completed' : ''}">${item.title || 'Untitled'}</div>
         <div class="assignment-meta">
-          ${item.dueAt ? `<span><i class="fas fa-clock"></i> ${formatDueDate(item.dueAt)}</span>` : ''}
+          ${item.dueAt ? `<span> ${formatDueDate(item.dueAt)}</span>` : ''}
           ${associatedClass ? `<span class="assignment-class"><span class="class-dot" style="background: ${associatedClass.color}"></span>${associatedClass.name}</span>` : ''}
-          ${item.important ? '<span class="assignment-important"><i class="fas fa-star"></i> Important</span>' : ''}
         </div>
       </div>
     `;
@@ -152,7 +141,6 @@ function renderAssignmentList(container, items, completedMap) {
           dueAt: item.dueAt || null,
           type: item.type || 'assignment',
           classId: item.classId || null,
-          important: !!item.important,
           __fromDB: false
         };
         saveCompletedLocal(map);
@@ -235,8 +223,7 @@ function setupEventListeners() {
 
 async function loadAndRender() {
   const todayListEl = document.getElementById('todayAssignments');
-  const importantListEl = document.getElementById('importantTasks');
-  if (!todayListEl || !importantListEl) return;
+  if (!todayListEl) return;
 
   let tasks = [];
   try {
@@ -249,23 +236,18 @@ async function loadAndRender() {
     console.warn('Failed to load tasks:', e);
   }
 
-  // Base lists from DB
+  // Base list from DB
   let todaysAssignments = tasks
     .filter(t => (t.type === 'assignment') && isDueToday(t))
-    .map(t => ({ ...t, __fromDB: true }));
-
-  let importantTasks = tasks
-    .filter(t => !!t.important && t.status !== 'done')
     .map(t => ({ ...t, __fromDB: true }));
 
   // Merge in locally completed items (they may have been deleted from DB)
   const completedMap = loadCompletedLocal();
   const completedItems = Object.values(completedMap || {});
 
-  // Add completed items back into relevant lists if they match criteria and aren't already present
+  // Add completed items back into relevant list if they match criteria and aren't already present
   const seenIds = new Set([
-    ...todaysAssignments.map(t => t.id),
-    ...importantTasks.map(t => t.id)
+    ...todaysAssignments.map(t => t.id)
   ]);
 
   for (const it of completedItems) {
@@ -275,16 +257,8 @@ async function loadAndRender() {
     }
   }
 
-  for (const it of completedItems) {
-    if (!seenIds.has(it.id) && !!it.important) {
-      importantTasks.push({ ...it, __fromDB: false });
-      seenIds.add(it.id);
-    }
-  }
-
   // Render
   renderAssignmentList(todayListEl, todaysAssignments, completedMap);
-  renderAssignmentList(importantListEl, importantTasks, completedMap);
   
   // Update stats and timeline
   updateStats();

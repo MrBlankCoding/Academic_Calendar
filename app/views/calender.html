@@ -13,7 +13,6 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h1 class="app-logo">
-                    <i class="fas fa-calendar-alt"></i>
                     Academic Calendar
                 </h1>
             </div>
@@ -22,7 +21,6 @@
                 <!-- Quick Actions -->
                 <div class="quick-actions">
                     <button id="add-assignment-btn" class="btn-create">
-                        <i class="fas fa-plus"></i>
                         Add Assignment
                     </button>
                 </div>
@@ -30,11 +28,9 @@
                 <!-- Navigation -->
                 <nav class="sidebar-nav">
                     <a href="/views/dashboard.html" class="nav-item">
-                        <i class="fas fa-home"></i>
                         <span>Dashboard</span>
                     </a>
                     <a href="/views/calender.html" class="nav-item active">
-                        <i class="fas fa-calendar"></i>
                         <span>Calendar</span>
                     </a>
                 </nav>
@@ -43,8 +39,6 @@
                 <div class="class-legend-section">
                     <div class="section-header">
                         <h3>My Classes</h3>
-                        <button class="btn-icon" id="toggle-all-classes" title="Toggle all classes">
-                            <i class="fas fa-eye"></i>
                         </button>
                     </div>
                     <div class="calendar-legend" id="class-legend" aria-label="Class color legend"></div>
@@ -69,11 +63,7 @@
                     <h2 class="page-title" id="calendar-title">Loading...</h2>
                 </div>
             </header>
-
-            <!-- Calendar Container -->
-            <div class="content-wrapper">
-                <div id="calendar"></div>
-            </div>
+            <div id="calendar"></div>
         </main>
         
         <!-- Assignment Modal -->
@@ -82,7 +72,6 @@
                 <div class="modal-header">
                     <h2 id="assignment-modal-title">Add New Assignment</h2>
                     <button class="btn-icon close" aria-label="Close">
-                        <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <form id="assignment-form">
@@ -109,18 +98,6 @@
                                     <option value="">Select a class...</option>
                                 </select>
                             </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="assignment-important" name="important">
-                                <span class="checkmark"></span>
-                                <span class="checkbox-text">Mark as Important</span>
-                            </label>
-                        </div>
-                        
-                        <div class="form-help">
-                            <small>Don't see your class? <a href="/views/dashboard.html">Add it in the dashboard</a></small>
                         </div>
                     </div>
                     

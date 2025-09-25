@@ -124,10 +124,6 @@
   border-radius: 50%;
 }
 
-.assignment-important {
-  color: #f59e0b;
-}
-
 /* Classes List */
 .classes-list {
   list-style: none;
@@ -203,4 +199,263 @@
   font-size: 2em;
   margin-bottom: var(--space-2);
   opacity: 0.5;
+}
+
+/* Upcoming Timeline */
+.upcoming-section {
+  margin-top: var(--space-5);
+}
+
+.upcoming-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.upcoming-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-3);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.upcoming-title i {
+  color: var(--primary);
+}
+
+.upcoming-filters {
+  display: inline-flex;
+  gap: 6px;
+  background: color-mix(in oklab, var(--surface) 95%, var(--border));
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.filter-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 6px 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  color: var(--text);
+  background: color-mix(in oklab, var(--primary) 6%, transparent);
+}
+
+.filter-btn.active {
+  color: var(--primary-contrast);
+  background: var(--primary);
+}
+
+/* Timeline container */
+.upcoming-timeline {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space-4) var(--space-3);
+}
+
+.timeline-container {
+  position: relative;
+  margin-left: 12px; /* room for the vertical line */
+}
+
+.timeline-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 12px;
+  width: 2px;
+  background: color-mix(in oklab, var(--primary) 35%, var(--border));
+  border-radius: 1px;
+}
+
+/* Timeline items */
+.timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+/* Date badge */
+.timeline-date {
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--primary) 12%, var(--surface));
+  color: var(--primary-contrast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.timeline-date .day {
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.timeline-date .month {
+  font-size: 10px;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Connector dot that sits on the line */
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: 8px; /* centers dot over the 2px line at 12px */
+  top: calc(50% - 5px);
+  width: 10px;
+  height: 10px;
+  background: var(--primary);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 15%, transparent);
+}
+
+/* Content card */
+.timeline-content {
+  background: color-mix(in oklab, var(--surface) 96%, var(--border));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: var(--space-3);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.timeline-content:hover {
+  border-color: var(--primary);
+  background: color-mix(in oklab, var(--primary) 6%, var(--surface));
+  transform: translateY(-1px);
+}
+
+.assignment-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.assignment-title-main {
+  margin: 0;
+  font-size: var(--fs-2);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.assignment-badges {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+}
+
+.badge.overdue {
+  color: #991b1b;
+  background: #fee2e2;
+  border-color: #ef444433;
+}
+
+.badge.due-soon {
+  color: #065f46;
+  background: #d1fae5;
+  border-color: #10b98133;
+}
+
+.assignment-details {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: var(--fs-1);
+}
+
+.assignment-class-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.class-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.assignment-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.assignment-description {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Empty state within timeline */
+.timeline-empty {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  color: var(--muted);
+}
+
+.timeline-empty i {
+  font-size: 40px;
+  opacity: 0.5;
+  margin-bottom: var(--space-2);
+}
+
+.timeline-empty h3 {
+  margin: 0 0 6px;
+  color: var(--text);
+}
+
+/* Responsive tweaks */
+@media (max-width: 720px) {
+  .upcoming-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  .timeline-item {
+    grid-template-columns: 48px 1fr;
+    gap: var(--space-2);
+  }
+  .upcoming-timeline {
+    padding: var(--space-3) var(--space-2);
+  }
 }

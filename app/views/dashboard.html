@@ -13,8 +13,7 @@
     <aside class="sidebar">
       <div class="sidebar-header">
         <h1 class="app-logo">
-          <i class="fas fa-home"></i>
-          Academic Dashboard
+          NAME OF OUR APP????
         </h1>
       </div>
 
@@ -22,7 +21,6 @@
         <!-- Quick Actions -->
         <div class="quick-actions">
           <button id="addClassBtn" class="btn-create">
-            <i class="fas fa-plus"></i>
             Add Class
           </button>
         </div>
@@ -30,11 +28,9 @@
         <!-- Navigation -->
         <nav class="sidebar-nav">
           <a href="/views/dashboard.html" class="nav-item active">
-            <i class="fas fa-home"></i>
             <span>Dashboard</span>
           </a>
           <a href="/views/calender.html" class="nav-item">
-            <i class="fas fa-calendar"></i>
             <span>Calendar</span>
           </a>
         </nav>
@@ -46,18 +42,12 @@
           </div>
           <div class="stats-grid">
             <div class="stat-card">
-              <div class="stat-icon">
-                <i class="fas fa-tasks"></i>
-              </div>
               <div class="stat-info">
                 <div class="stat-number" id="totalAssignments">0</div>
                 <div class="stat-label">Total Assignments</div>
               </div>
             </div>
             <div class="stat-card">
-              <div class="stat-icon">
-                <i class="fas fa-book"></i>
-              </div>
               <div class="stat-info">
                 <div class="stat-number" id="totalClasses">0</div>
                 <div class="stat-label">Classes</div>
@@ -72,7 +62,6 @@
             <h3>Settings</h3>
           </div>
           <button id="settingsBtn" class="settings-btn">
-            <i class="fas fa-cog"></i>
             <span>Preferences</span>
           </button>
         </div>
@@ -83,12 +72,8 @@
     <main class="main-content">
       <!-- Dashboard Header -->
       <header class="app-header">
-        <div class="header-left">
-          <h2 class="page-title">Dashboard</h2>
-        </div>
         <div class="header-right">
           <div class="header-date">
-            <i class="fas fa-calendar-day"></i>
             <span id="currentDate"></span>
           </div>
         </div>
@@ -101,7 +86,6 @@
           <section class="dashboard-card">
             <div class="card-header">
               <h3>
-                <i class="fas fa-clock"></i>
                 Due Today
               </h3>
               <span class="card-count" id="todayCount">0</span>
@@ -111,25 +95,11 @@
             </div>
           </section>
 
-          <!-- Important Assignments -->
-          <section class="dashboard-card">
-            <div class="card-header">
-              <h3>
-                <i class="fas fa-star"></i>
-                Important
-              </h3>
-              <span class="card-count" id="importantCount">0</span>
-            </div>
-            <div class="card-content">
-              <ul id="importantTasks" class="assignment-list"></ul>
-            </div>
-          </section>
 
           <!-- My Classes -->
           <section class="dashboard-card classes-card">
             <div class="card-header">
               <h3>
-                <i class="fas fa-graduation-cap"></i>
                 My Classes
               </h3>
               <span class="card-count" id="classesCount">0</span>
@@ -144,7 +114,6 @@
         <section class="upcoming-section">
           <div class="upcoming-header">
             <h2 class="upcoming-title">
-              <i class="fas fa-calendar-week"></i>
               Upcoming Assignments
             </h2>
             <div class="upcoming-filters">
@@ -173,7 +142,6 @@
       <div class="modal-header">
         <h2 id="class-modal-title">Add New Class</h2>
         <button class="btn-icon close" aria-label="Close">
-          <i class="fas fa-times"></i>
         </button>
       </div>
       <form id="class-form">
@@ -208,7 +176,6 @@
       <div class="modal-header">
         <h2>Settings</h2>
         <button class="btn-icon close" aria-label="Close">
-          <i class="fas fa-times"></i>
         </button>
       </div>
       <div class="modal-body">
@@ -216,15 +183,12 @@
           <h3>Theme</h3>
           <div class="theme-toggle">
             <button id="btnThemeSystem" class="btn outline" type="button">
-              <i class="fas fa-desktop"></i>
               System
             </button>
             <button id="btnThemeLight" class="btn outline" type="button">
-              <i class="fas fa-sun"></i>
               Light
             </button>
             <button id="btnThemeDark" class="btn outline" type="button">
-              <i class="fas fa-moon"></i>
               Dark
             </button>
           </div>
@@ -233,11 +197,9 @@
           <h3>Account</h3>
           <div class="settings-actions">
             <button id="signOutBtn" class="btn outline">
-              <i class="fas fa-sign-out-alt"></i>
               Sign Out
             </button>
             <button id="deleteAccountBtn" class="btn danger">
-              <i class="fas fa-trash"></i>
               Delete Account
             </button>
           </div>

@@ -25,8 +25,7 @@ async function addTask(task) {
     calendarEventId: task.calendarEventId || null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    status: task.status || 'pending', // pending | done
-    important: !!task.important,
+    status: task.status || 'pending' // pending | done
   });
   return ref.id;
 }

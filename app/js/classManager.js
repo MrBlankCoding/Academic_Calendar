@@ -30,7 +30,6 @@ function renderClasses() {
     const emptyState = document.createElement('li');
     emptyState.className = 'empty-state';
     emptyState.innerHTML = `
-      <i class="fas fa-graduation-cap"></i>
       <p>No classes added yet</p>
       <small>Add your first class to get started</small>
     `;
@@ -50,10 +49,8 @@ function renderClasses() {
       </div>
       <div class="class-actions">
         <button class="btn small outline edit-class-btn" data-class-id="${classItem.id}">
-          <i class="fas fa-edit"></i>
         </button>
         <button class="btn small danger delete-class-btn" data-class-id="${classItem.id}">
-          <i class="fas fa-trash"></i>
         </button>
       </div>
     `;

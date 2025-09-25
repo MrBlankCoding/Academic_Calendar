@@ -59,7 +59,6 @@ function renderUpcomingTimeline() {
     const emptyState = document.createElement('div');
     emptyState.className = 'timeline-empty';
     emptyState.innerHTML = `
-      <i class="fas fa-calendar-check"></i>
       <h3>No upcoming assignments</h3>
       <p>You're all caught up! ${currentFilter === 'all' ? 'Add some assignments to see them here.' : 'Try changing the filter to see more assignments.'}</p>
     `;
@@ -180,7 +179,6 @@ function createTimelineContent(assignment, date) {
         </div>
       ` : ''}
       <div class="assignment-time">
-        <i class="fas fa-clock"></i>
         <span>${formatTimeFromDate(dueDate)}</span>
       </div>
     </div>

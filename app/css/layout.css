@@ -25,6 +25,13 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0; /* ensure children can shrink within viewport height */
+}
+
+/* Make calendar fill remaining space under header */
+.main-content > #calendar {
+  flex: 1;
+  min-height: 0; /* allow flexbox to shrink content to fit viewport */
 }
 
 /* App Header */

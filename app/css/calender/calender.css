@@ -98,8 +98,8 @@
 #calendar {
   height: 100%;
   background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -115,6 +115,7 @@
 
 .fc .fc-view-harness {
   background: var(--surface);
+  height: 100% !important; /* ensure harness fills container */
 }
 
 .fc .fc-scrollgrid {
@@ -145,8 +146,8 @@
 }
 
 .fc .fc-daygrid-day-frame {
-  padding: 8px;
-  min-height: 120px;
+  padding: 4px;
+  min-height: 0; /* allow rows to compress to fit available height */
 }
 
 .fc .fc-daygrid-day-number {
@@ -169,6 +170,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.fc .fc-scroller {
+  overflow: hidden !important;
 }
 
 /* Event Styles */
@@ -251,22 +256,4 @@
 .checkbox-text {
   font-size: var(--fs-2);
   font-weight: 500;
-}
-
-.form-help {
-  margin-top: var(--space-2);
-}
-
-.form-help small {
-  color: var(--muted);
-  font-size: var(--fs-1);
-}
-
-.form-help a {
-  color: var(--primary);
-  text-decoration: none;
-}
-
-.form-help a:hover {
-  text-decoration: underline;
 }

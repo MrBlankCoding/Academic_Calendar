@@ -1,4 +1,3 @@
-/* Modal Styles */
 .modal {
   position: fixed;
   inset: 0;
@@ -23,18 +22,6 @@
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  animation: modalSlideIn 0.3s ease;
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .modal-header {
@@ -44,13 +31,6 @@
   padding: var(--space-4);
   border-bottom: 1px solid var(--border);
   background: var(--surface);
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: var(--fs-3);
-  font-weight: 700;
-  color: var(--text);
 }
 
 .modal-body {
@@ -67,7 +47,6 @@
   background: color-mix(in oklab, var(--surface) 95%, var(--border));
 }
 
-/* Form Styles */
 .form-group {
   margin-bottom: var(--space-3);
 }
@@ -157,33 +136,6 @@
 .btn.primary {
   background: var(--primary);
   color: var(--primary-contrast);
-}
-
-.btn.primary:hover {
-  background: color-mix(in oklab, var(--primary) 90%, black);
-  transform: translateY(-1px);
-}
-
-.btn.outline {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.btn.outline:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: color-mix(in oklab, var(--primary) 5%, transparent);
-}
-
-.btn.danger {
-  background: #ef4444;
-  color: white;
-}
-
-.btn.danger:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
 }
 
 .btn.small {

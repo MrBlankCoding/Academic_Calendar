@@ -129,22 +129,12 @@ class AcademicCalendar {
             eventClick: (info) => this.handleEventClick(info),
             eventDrop: (info) => this.handleEventDrop(info),
             datesSet: (info) => {
-                this.renderDayBadges();
                 this.updateCalendarTitle();
             },
 
             // Day cell hook for badges
             dayCellDidMount: (arg) => {
-                // Ensure a badge container exists
-                const dateKey = toLocalDateKey(arg.date);
-                const badge = document.createElement('span');
-                badge.className = 'day-badge';
-                badge.dataset.date = dateKey;
-                badge.textContent = '';
-                // Avoid duplicates
-                if (!arg.el.querySelector('.day-badge')) {
-                    arg.el.appendChild(badge);
-                }
+                // Day badges disabled
             },
             
             // Custom event rendering for assignments
@@ -159,11 +149,6 @@ class AcademicCalendar {
                         info.el.style.borderColor = associatedClass.color;
                     }
                     
-                    // Mark important assignments
-                    if (assignment.important) {
-                        info.el.classList.add('important');
-                    }
-                    
                     // Add tooltip with assignment details
                     const tooltip = this.createAssignmentTooltip(assignment, associatedClass);
                     info.el.setAttribute('title', tooltip);
@@ -172,8 +157,6 @@ class AcademicCalendar {
         });
 
         this.calendar.render();
-        // Initial badge render after first paint
-        setTimeout(() => this.renderDayBadges(), 0);
     }
 
     updateCalendarTitle() {
@@ -191,8 +174,7 @@ class AcademicCalendar {
             allDay: true,
             extendedProps: {
                 description: assignment.description,
-                classId: assignment.classId,
-                important: assignment.important
+                classId: assignment.classId
             }
         }));
     }
@@ -207,7 +189,6 @@ class AcademicCalendar {
         // Replace events with filtered list
         this.calendar.removeAllEvents();
         this.calendar.addEventSource(this.formatAssignmentsForCalendar(filtered));
-        this.renderDayBadges();
     }
 
     createAssignmentTooltip(assignment, associatedClass) {
@@ -217,9 +198,6 @@ class AcademicCalendar {
         }
         if (assignment.description) {
             tooltip += `\nDescription: ${assignment.description}`;
-        }
-        if (assignment.important) {
-            tooltip += `\n⭐ Important`;
         }
         return tooltip;
     }
@@ -340,7 +318,6 @@ class AcademicCalendar {
             assignment.dueAt = newDueDate;
             // TODO: Update in Firestore
         }
-        this.renderDayBadges();
     }
 
     openModal() {
@@ -384,7 +361,6 @@ class AcademicCalendar {
             description: formData.get('description') || '',
             dueAt: formData.get('dueDate'),
             classId: formData.get('classId') || null,
-            important: formData.get('important') === 'on',
             type: 'assignment'
         };
 
@@ -431,34 +407,9 @@ class AcademicCalendar {
             // TODO: Remove from Firestore
             // await removeTask(assignmentId);
             
-            this.renderDayBadges();
-            
         } catch (error) {
             console.error('Error deleting assignment:', error);
         }
-    }
-
-    renderDayBadges() {
-        if (!this.calendar) return;
-        // Build counts for the visible range
-        const assignments = this.getFilteredAssignments();
-        const counts = new Map();
-        for (const a of assignments) {
-            if (!a.dueAt) continue;
-            const key = toLocalDateKey(a.dueAt);
-            counts.set(key, (counts.get(key) || 0) + 1);
-        }
-        // Update badges in the current DOM
-        const dayCells = document.querySelectorAll('.fc-daygrid-day');
-        dayCells.forEach(cell => {
-            const dateKey = cell.getAttribute('data-date');
-            const badge = cell.querySelector('.day-badge');
-            const count = counts.get(dateKey) || 0;
-            if (badge) {
-                badge.textContent = count > 0 ? String(count) : '';
-                badge.style.display = count > 0 ? 'inline-flex' : 'none';
-            }
-        });
     }
 
     renderClassLegend() {
