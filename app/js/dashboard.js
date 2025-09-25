@@ -3,9 +3,6 @@ import { initThemeToggle, syncTheme } from "/js/theme.js";
 import { listTasks, removeTask } from "/js/tasks.js";
 import { collection, doc, deleteDoc, getDocs } from 'firebase/firestore';
 import { 
-  parseDate, 
-  startOfToday, 
-  endOfToday, 
   formatDueDate, 
   formatCurrentDate, 
   isDueToday, 
@@ -13,79 +10,39 @@ import {
 } from "/js/dateUtils.js";
 import { 
   loadClasses,
-  getUserClasses,
   setupClassEventListeners,
   findClassById
 } from "/js/classManager.js";
 import {
   initTimeline,
   updateTimelineTasks,
-  updateTimelineClasses,
   setupUpcomingFilters,
   renderUpcomingTimeline
 } from "/js/timelineManager.js";
 
-// Protect page and init theme
+// Init 
 protectPageOrRedirectToLogin();
 syncTheme();
 initThemeToggle();
 
-// Global state
+// state
 let allTasks = [];
 
-// Initialize dashboard
 async function initDashboard() {
   setupEventListeners();
   setupUpcomingFilters();
   updateCurrentDate();
   await loadAndRender();
   const classes = await loadClasses();
-  updateStats();
   
-  // Initialize timeline with tasks and classes
   initTimeline(allTasks, classes);
   renderUpcomingTimeline();
 }
 
-// Update current date display
 function updateCurrentDate() {
   const dateEl = document.getElementById('currentDate');
   if (dateEl) {
     dateEl.textContent = formatCurrentDate();
-  }
-}
-
-// Update stats in sidebar
-function updateStats() {
-  const totalAssignmentsEl = document.getElementById('totalAssignments');
-  const totalClassesEl = document.getElementById('totalClasses');
-  const todayCountEl = document.getElementById('todayCount');
-  const classesCountEl = document.getElementById('classesCount');
-
-  const userClasses = getUserClasses();
-
-  if (totalAssignmentsEl) {
-    totalAssignmentsEl.textContent = allTasks.filter(t => t.type === 'assignment').length;
-  }
-  
-  if (totalClassesEl) {
-    totalClassesEl.textContent = userClasses.length;
-  }
-
-  // Count today's assignments
-  const start = startOfToday();
-  const end = endOfToday();
-  const todayAssignments = allTasks.filter(t => {
-    const d = parseDate(t.dueAt);
-    return t.type === 'assignment' && d && d >= start && d <= end;
-  });
-
-  if (todayCountEl) {
-    todayCountEl.textContent = todayAssignments.length;
-  }
-
-  if (classesCountEl) {
-    classesCountEl.textContent = userClasses.length;
   }
 }
 
@@ -106,7 +63,6 @@ function renderAssignmentList(container, items, completedMap) {
     const li = document.createElement('li');
     li.className = 'assignment-item';
 
-    // Find associated class for color
     const associatedClass = findClassById(item.classId);
     if (associatedClass) {
       li.style.borderLeft = `4px solid ${associatedClass.color}`;
@@ -132,9 +88,7 @@ function renderAssignmentList(container, items, completedMap) {
       const checked = e.currentTarget.checked;
       const map = loadCompletedLocal();
       if (checked) {
-        // Optimistically strike-through and delete from DB
         title.classList.add('completed');
-        // Persist the full item so it can be rendered after reload today
         map[item.id] = {
           id: item.id,
           title: item.title,
@@ -157,14 +111,12 @@ function renderAssignmentList(container, items, completedMap) {
           saveCompletedLocal(map);
         }
       } else {
-        // Un-complete locally (won't re-add to DB)
         title.classList.remove('completed');
         delete map[item.id];
         saveCompletedLocal(map);
       }
       
-      // Update stats and timeline after completion change
-      updateStats();
+      // Update timeline after completion change
       updateTimelineTasks(allTasks);
       renderUpcomingTimeline();
     });
@@ -173,15 +125,12 @@ function renderAssignmentList(container, items, completedMap) {
   }
 }
 
-// Event listeners setup
 function setupEventListeners() {
-  // Settings button
   const settingsBtn = document.getElementById("settingsBtn");
   settingsBtn?.addEventListener("click", () => {
     openSettingsModal();
   });
 
-  // Sign out button (in settings modal)
   const signOutBtn = document.getElementById("signOutBtn");
   signOutBtn?.addEventListener("click", () => {
     signOutAndGoHome();
@@ -191,12 +140,10 @@ function setupEventListeners() {
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
   deleteAccountBtn?.addEventListener("click", async () => {
     await handleDeleteAccount();
-  });
+  }); 
 
-  // Setup class-related event listeners
   setupClassEventListeners();
 
-  // Modal close buttons
   document.querySelectorAll('.modal .close').forEach(closeBtn => {
     closeBtn.addEventListener('click', (e) => {
       const modal = e.target.closest('.modal');
@@ -204,14 +151,12 @@ function setupEventListeners() {
     });
   });
 
-  // Close modals when clicking outside
   window.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal')) {
       e.target.classList.remove('open');
     }
   });
 
-  // Escape key to close modals
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       document.querySelectorAll('.modal.open').forEach(modal => {
@@ -228,7 +173,7 @@ async function loadAndRender() {
   let tasks = [];
   try {
     tasks = await listTasks();
-    allTasks = tasks; // Store for stats and timeline
+    allTasks = tasks; // Store for timeline
     
     // Update timeline with new tasks
     updateTimelineTasks(allTasks);
@@ -236,16 +181,12 @@ async function loadAndRender() {
     console.warn('Failed to load tasks:', e);
   }
 
-  // Base list from DB
   let todaysAssignments = tasks
     .filter(t => (t.type === 'assignment') && isDueToday(t))
     .map(t => ({ ...t, __fromDB: true }));
-
-  // Merge in locally completed items (they may have been deleted from DB)
   const completedMap = loadCompletedLocal();
   const completedItems = Object.values(completedMap || {});
 
-  // Add completed items back into relevant list if they match criteria and aren't already present
   const seenIds = new Set([
     ...todaysAssignments.map(t => t.id)
   ]);
@@ -260,8 +201,7 @@ async function loadAndRender() {
   // Render
   renderAssignmentList(todayListEl, todaysAssignments, completedMap);
   
-  // Update stats and timeline
-  updateStats();
+  // Update timeline
   renderUpcomingTimeline();
 }
 
@@ -341,7 +281,6 @@ async function deleteUserData(uid) {
   await deleteDoc(userRef);
 }
 
-// Utility to run after auth is ready (onAuthStateChanged may fire after DOMContentLoaded)
 function firebaseAuthReady(cb) {
   if (auth.currentUser) { cb(); return () => {}; }
   const un = onAuthStateChanged(auth, () => { cb(); un(); });

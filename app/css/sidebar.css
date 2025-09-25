@@ -86,57 +86,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Stats Section */
-.stats-section {
-  border-top: 1px solid var(--border);
-  padding-top: var(--space-3);
-}
-
-.stats-grid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.stat-card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2);
-  background: color-mix(in oklab, var(--surface) 95%, var(--border));
-  border-radius: 8px;
-  border: 1px solid var(--border);
-}
-
-.stat-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--primary);
-  color: var(--primary-contrast);
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.stat-info {
-  flex: 1;
-}
-
-.stat-number {
-  font-size: var(--fs-3);
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: var(--fs-1);
-  color: var(--muted);
-  margin-top: 2px;
-}
-
 /* Settings Section */
 .settings-section {
   border-top: 1px solid var(--border);

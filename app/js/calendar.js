@@ -349,6 +349,9 @@ class AcademicCalendar {
     editAssignmentFromDetails() {
         if (!this.currentAssignment) return;
     
+        // Capture the assignment before closing the details modal (which clears it)
+        const assignment = this.currentAssignment;
+    
         // Close details modal
         this.closeDetailsModal();
     
@@ -362,13 +365,13 @@ class AcademicCalendar {
         modalTitle.textContent = 'Edit Assignment';
         submitBtn.textContent = 'Update Assignment';
         form.dataset.editMode = 'true';
-        form.dataset.assignmentId = this.currentAssignment.id;
+        form.dataset.assignmentId = assignment.id;
     
         // Populate form fields
-        document.getElementById('assignment-title').value = this.currentAssignment.title;
-        document.getElementById('assignment-description').value = this.currentAssignment.description || '';
-        document.getElementById('assignment-due-date').value = formatDateForInput(new Date(this.currentAssignment.dueAt));
-        document.getElementById('assignment-class').value = this.currentAssignment.classId || '';
+        document.getElementById('assignment-title').value = assignment.title;
+        document.getElementById('assignment-description').value = assignment.description || '';
+        document.getElementById('assignment-due-date').value = formatDateForInput(new Date(assignment.dueAt));
+        document.getElementById('assignment-class').value = assignment.classId || '';
     
         // Show modal
         modal.classList.add('open');
